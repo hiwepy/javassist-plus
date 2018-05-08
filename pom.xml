@@ -5,7 +5,7 @@
 	<groupId>com.github.vindell</groupId>
 	<artifactId>javassist-plus</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<description>wkhtmltox for Java</description>
+	<description>javassist plus</description>
 	<name>${project.groupId}:${project.artifactId}</name>
 	<url>https://github.com/Jeebiz/${project.artifactId}</url>
 	<packaging>jar</packaging>

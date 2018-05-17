@@ -1,5 +1,7 @@
 package com.github.vindell.javassist.proxy;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -27,14 +29,38 @@ public class JavassistProxyExample1 {
 				
 				System.out.println("------- intercept before --------");  
 		        // 调用原来的方法  
-		        Object result = method.invoke(proxy, args);  
+		       // Object result = method.invoke(proxy, args);  
 		        System.out.println("--------intercept after ---------");  
-		        return result;  
+		        return null;  
 				
 			}
 		});  
 		
-		obj.toString();
+		Class<?> clazz = obj.getClass();
+		
+		System.err.println("=========Type Annotations======================");
+		for (Annotation element : clazz.getAnnotations()) {
+			System.out.println(element.toString());
+		}
+		
+		System.err.println("=========Fields======================");
+		for (Field element : clazz.getDeclaredFields()) {
+			System.out.println(element.getName());
+			for (Annotation anno : element.getAnnotations()) {
+				System.out.println(anno.toString());
+			}
+		}
+		System.err.println("=========Methods======================");
+		for (Method element : clazz.getDeclaredMethods()) {
+			System.out.println(element.getName());
+			for (Annotation anno : element.getAnnotations()) {
+				System.out.println(anno.toString());
+			}
+		}
+		System.err.println("=========sayHello======================");
+		
+		Method mt =  obj.getClass().getDeclaredMethod("sayHello", String.class);
+		mt.invoke(obj, "xxx");
 		
 	}
  

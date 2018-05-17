@@ -32,7 +32,7 @@ public class JavassistExample2 {
 	// 获取类的简单信息
 	public static void test01() throws Exception {
 		ClassPool pool = ClassPool.getDefault();
-		CtClass cc = pool.get("org.apache.cxf.spring.boot.entity.Person");
+		CtClass cc = pool.get("com.github.vindell.javassist.entity.Person");
 		// 得到字节码
 		byte[] bytes = cc.toBytecode();
 		System.out.println(Arrays.toString(bytes));
@@ -46,7 +46,7 @@ public class JavassistExample2 {
 	// 新生成一个方法
 	public static void test02() throws Exception {
 		ClassPool pool = ClassPool.getDefault();
-		CtClass cc = pool.get("org.apache.cxf.spring.boot.entity.Person");
+		CtClass cc = pool.get("com.github.vindell.javassist.entity.Person");
 		// 第一种
 		// CtMethod cm = CtMethod.make("public String getName(){return name;}", cc);
 		// 第二种
@@ -110,7 +110,7 @@ public class JavassistExample2 {
 	// 操作构造方法
 	public static void test05() throws Exception {
 		ClassPool pool = ClassPool.getDefault();
-		CtClass cc = pool.get("org.apache.cxf.spring.boot.entity.Person");
+		CtClass cc = pool.get("com.github.vindell.javassist.entity.Person");
 
 		CtConstructor[] cons = cc.getConstructors();
 		for (CtConstructor con : cons) {

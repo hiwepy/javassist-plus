@@ -24,6 +24,7 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.LoaderClassPath;
+import javassist.Modifier;
 import javassist.NotFoundException;
 
 /**
@@ -137,6 +138,18 @@ public class JavassistUtils {
 			return false;
 		}
 	}
+	
+    /** 
+     * 设置类的修饰符 
+     */  
+	public static void setModifiers(CtClass ctclass, boolean isPublic, boolean isFinal, boolean isAbstract) {  
+        int modifier = 0;  
+        modifier = isPublic ? modifier | Modifier.PUBLIC : modifier;  
+        modifier = isFinal ? modifier | Modifier.FINAL : modifier;  
+        modifier = isAbstract ? modifier | Modifier.ABSTRACT : modifier;  
+        ctclass.setModifiers(modifier);  
+    }  
+    
 	
 	/*public static boolean reload(final CtClass ctclass, final String port) {
 		byte[] classFile = ctclass.toBytecode();

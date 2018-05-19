@@ -63,6 +63,7 @@ import javassist.bytecode.annotation.StringMemberValue;
  * 
  * @author stuart
  */
+@SuppressWarnings("rawtypes")
 public class CtAnnotationBuilder implements Builder<Annotation> {
 
 	private Annotation annotation;
@@ -100,11 +101,11 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 	
-	public CtAnnotationBuilder addArrayMember(String name, String[] values) {
+	public CtAnnotationBuilder addAnnotationMember(String name, Annotation[] values) {
 		ArrayMemberValue member = new ArrayMemberValue(constPool);
-		StringMemberValue[] members = new StringMemberValue[values.length];
+		AnnotationMemberValue[] members = new AnnotationMemberValue[values.length];
 		for (int i = 0; i < values.length; i++) {
-			members[i] = new StringMemberValue(values[i], constPool);
+			members[i] = new AnnotationMemberValue(values[i], constPool);
 		}
 		member.setValue(members);
 		annotation.addMemberValue(name, member);
@@ -116,8 +117,30 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 	
+	public CtAnnotationBuilder addBooleanMember(String name, boolean[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		BooleanMemberValue[] members = new BooleanMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new BooleanMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addByteMember(String name, byte value) {
 		annotation.addMemberValue(name, new ByteMemberValue(value, constPool));
+		return this;
+	}
+	
+	public CtAnnotationBuilder addByteMember(String name, byte[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		ByteMemberValue[] members = new ByteMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new ByteMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
 		return this;
 	}
 	
@@ -126,9 +149,31 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 
+	public CtAnnotationBuilder addCharMember(String name, char[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		CharMemberValue[] members = new CharMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new CharMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addClassMember(String name, String value) {
 		ClassMemberValue classValue = new ClassMemberValue(value, constPool);
 		annotation.addMemberValue(name, classValue);
+		return this;
+	}
+	
+	public CtAnnotationBuilder addClassMember(String name, String[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		ClassMemberValue[] members = new ClassMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new ClassMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
 		return this;
 	}
 	
@@ -137,12 +182,38 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 
-	@SuppressWarnings("rawtypes")
+	public CtAnnotationBuilder addDoubleMember(String name, double[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		DoubleMemberValue[] members = new DoubleMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new DoubleMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addEnumMember(String name, Enum value) {
 		EnumMemberValue enumValue = new EnumMemberValue(constPool);
 		enumValue.setType(value.getClass().getName());
 		enumValue.setValue(value.name());
 		annotation.addMemberValue(name, enumValue);
+		return this;
+	}
+	
+	public CtAnnotationBuilder addEnumMember(String name, Enum[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		EnumMemberValue[] members = new EnumMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			
+			EnumMemberValue enumValue = new EnumMemberValue(constPool);
+			enumValue.setType(values[i].getClass().getName());
+			enumValue.setValue(values[i].name());
+			
+			members[i] = enumValue;
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
 		return this;
 	}
 
@@ -151,8 +222,30 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 	
+	public CtAnnotationBuilder addFloatMember(String name, float[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		FloatMemberValue[] members = new FloatMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new FloatMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addIntegerMember(String name, int value) {
 		annotation.addMemberValue(name, new IntegerMemberValue(constPool, value));
+		return this;
+	}
+	
+	public CtAnnotationBuilder addIntegerMember(String name, int[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		IntegerMemberValue[] members = new IntegerMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new IntegerMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
 		return this;
 	}
 	
@@ -161,13 +254,46 @@ public class CtAnnotationBuilder implements Builder<Annotation> {
 		return this;
 	}
 
+	public CtAnnotationBuilder addLongMember(String name, long[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		LongMemberValue[] members = new LongMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new LongMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addShortMember(String name, short value) {
 		annotation.addMemberValue(name, new ShortMemberValue(value, constPool));
 		return this;
 	}
 	
+	public CtAnnotationBuilder addShortMember(String name, short[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		ShortMemberValue[] members = new ShortMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new ShortMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
+		return this;
+	}
+	
 	public CtAnnotationBuilder addStringMember(String name, String value) {
 		annotation.addMemberValue(name, new StringMemberValue(value, constPool));
+		return this;
+	}
+	
+	public CtAnnotationBuilder addStringMember(String name, String[] values) {
+		ArrayMemberValue member = new ArrayMemberValue(constPool);
+		StringMemberValue[] members = new StringMemberValue[values.length];
+		for (int i = 0; i < values.length; i++) {
+			members[i] = new StringMemberValue(values[i], constPool);
+		}
+		member.setValue(members);
+		annotation.addMemberValue(name, member);
 		return this;
 	}
 

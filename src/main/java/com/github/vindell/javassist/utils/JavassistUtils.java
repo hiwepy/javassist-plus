@@ -58,57 +58,16 @@ import javassist.bytecode.annotation.StringMemberValue;
  */
 public class JavassistUtils {
 
-	public static boolean hasField(final CtClass ctclass, final String fieldName) {
-		try {
-			// 检查字段是否已经定义
-			CtField field = ctclass.getDeclaredField(fieldName);
-			if (field != null) {
-				return true;
-			}
-			return false;
-		} catch (NotFoundException e) {
-			return false;
-		}
-	}
-
-	public static boolean hasMethod(final CtClass ctclass, final String methodName, CtClass... paramTypes) {
-		try {
-			// 有参方法
-			if (paramTypes != null && paramTypes.length > 0) {
-				// 检查方法是否已经定义
-				CtMethod method = ctclass.getDeclaredMethod(methodName, paramTypes);
-				if (method != null) {
-					return true;
-				}
-			} else {
-				// 检查方法是否已经定义
-				CtMethod method = ctclass.getDeclaredMethod(methodName);
-				if (method != null) {
-					return true;
-				}
-			}
-			return false;
-		} catch (NotFoundException e) {
-			return false;
-		}
-	}
-
 	public static void addClassAnnotation(CtClass clazz, javassist.bytecode.annotation.Annotation annotation) {
 		ClassFile classFile = clazz.getClassFile();
-		AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
-		if (attribute == null) {
-			attribute = new AnnotationsAttribute(classFile.getConstPool(), AnnotationsAttribute.visibleTag);
-		}
+		AnnotationsAttribute attribute = getClassAttribute(clazz);
 		attribute.addAnnotation(annotation);
 		classFile.addAttribute(attribute);
 	}
 
 	public static void addFieldAnnotation(CtField field, javassist.bytecode.annotation.Annotation annotation) {
 		FieldInfo fieldInfo = field.getFieldInfo();
-		AnnotationsAttribute attribute = (AnnotationsAttribute) fieldInfo.getAttribute(AnnotationsAttribute.visibleTag);
-		if (attribute == null) {
-			attribute = new AnnotationsAttribute(fieldInfo.getConstPool(), AnnotationsAttribute.visibleTag);
-		}
+		AnnotationsAttribute attribute = getFieldAttribute(field);
 		attribute.addAnnotation(annotation);
 		fieldInfo.addAttribute(attribute);
 	}
@@ -383,6 +342,59 @@ public class JavassistUtils {
 			return emv;
 		}
 		throw new RuntimeException("Invalid array type " + type + " value: " + val);
+	}
+	
+	public static AnnotationsAttribute getClassAttribute(CtClass clazz) {
+		ClassFile classFile = clazz.getClassFile();
+		AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
+		if (attribute == null) {
+			attribute = new AnnotationsAttribute(classFile.getConstPool(), AnnotationsAttribute.visibleTag);
+		}
+		return attribute;
+	}
+	
+	public static AnnotationsAttribute getFieldAttribute(CtField field) {
+		FieldInfo fieldInfo = field.getFieldInfo();
+		AnnotationsAttribute attribute = (AnnotationsAttribute) fieldInfo.getAttribute(AnnotationsAttribute.visibleTag);
+		if (attribute == null) {
+			attribute = new AnnotationsAttribute(fieldInfo.getConstPool(), AnnotationsAttribute.visibleTag);
+		}
+		return attribute;
+	}
+	
+	public static boolean hasField(final CtClass ctclass, final String fieldName) {
+		try {
+			// 检查字段是否已经定义
+			CtField field = ctclass.getDeclaredField(fieldName);
+			if (field != null) {
+				return true;
+			}
+			return false;
+		} catch (NotFoundException e) {
+			return false;
+		}
+	}
+
+	public static boolean hasMethod(final CtClass ctclass, final String methodName, CtClass... paramTypes) {
+		try {
+			// 有参方法
+			if (paramTypes != null && paramTypes.length > 0) {
+				// 检查方法是否已经定义
+				CtMethod method = ctclass.getDeclaredMethod(methodName, paramTypes);
+				if (method != null) {
+					return true;
+				}
+			} else {
+				// 检查方法是否已经定义
+				CtMethod method = ctclass.getDeclaredMethod(methodName);
+				if (method != null) {
+					return true;
+				}
+			}
+			return false;
+		} catch (NotFoundException e) {
+			return false;
+		}
 	}
 
 }

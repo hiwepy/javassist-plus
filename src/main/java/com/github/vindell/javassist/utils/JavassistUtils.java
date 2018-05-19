@@ -60,14 +60,14 @@ public class JavassistUtils {
 
 	public static void addClassAnnotation(CtClass clazz, javassist.bytecode.annotation.Annotation annotation) {
 		ClassFile classFile = clazz.getClassFile();
-		AnnotationsAttribute attribute = getClassAttribute(clazz);
+		AnnotationsAttribute attribute = getClassAnnotationsAttribute(clazz);
 		attribute.addAnnotation(annotation);
 		classFile.addAttribute(attribute);
 	}
 
 	public static void addFieldAnnotation(CtField field, javassist.bytecode.annotation.Annotation annotation) {
 		FieldInfo fieldInfo = field.getFieldInfo();
-		AnnotationsAttribute attribute = getFieldAttribute(field);
+		AnnotationsAttribute attribute = getFieldAnnotationsAttribute(field);
 		attribute.addAnnotation(annotation);
 		fieldInfo.addAttribute(attribute);
 	}
@@ -344,7 +344,7 @@ public class JavassistUtils {
 		throw new RuntimeException("Invalid array type " + type + " value: " + val);
 	}
 	
-	public static AnnotationsAttribute getClassAttribute(CtClass clazz) {
+	public static AnnotationsAttribute getClassAnnotationsAttribute(final CtClass clazz) {
 		ClassFile classFile = clazz.getClassFile();
 		AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
 		if (attribute == null) {
@@ -353,11 +353,20 @@ public class JavassistUtils {
 		return attribute;
 	}
 	
-	public static AnnotationsAttribute getFieldAttribute(CtField field) {
+	public static AnnotationsAttribute getFieldAnnotationsAttribute(final CtField field) {
 		FieldInfo fieldInfo = field.getFieldInfo();
 		AnnotationsAttribute attribute = (AnnotationsAttribute) fieldInfo.getAttribute(AnnotationsAttribute.visibleTag);
 		if (attribute == null) {
 			attribute = new AnnotationsAttribute(fieldInfo.getConstPool(), AnnotationsAttribute.visibleTag);
+		}
+		return attribute;
+	}
+	
+	public static ParameterAnnotationsAttribute getParameterAnnotationsAttribute(final CtMethod ctMethod) {
+		MethodInfo methodInfo = ctMethod.getMethodInfo();
+		ParameterAnnotationsAttribute attribute = (ParameterAnnotationsAttribute) methodInfo.getAttribute(ParameterAnnotationsAttribute.visibleTag);
+		if (attribute == null) {
+			attribute = new ParameterAnnotationsAttribute(methodInfo.getConstPool(), ParameterAnnotationsAttribute.visibleTag);
 		}
 		return attribute;
 	}

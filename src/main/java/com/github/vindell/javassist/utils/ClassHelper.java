@@ -16,16 +16,25 @@
  */
 package com.github.vindell.javassist.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ClassHelper {
 
+	private static Logger logger = LoggerFactory.getLogger(ClassHelper.class.getName());
+	
     /**
      * Suffix for array class names: "[]"
      */
@@ -197,6 +206,51 @@ public class ClassHelper {
         }
         return result;
     }
+    
+    /**
+	 * returns set of URL paths of all classpath, also considering EAR case.
+	 * 
+	 * @return Set
+	 */
+	public static Set<URL> getClasspathUrlsByManifest() {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		Set<URL> urls = new HashSet<URL>();
+		try {
+			Enumeration<URL> r = loader.getResources("META-INF/MANIFEST.MF");
+			while (r.hasMoreElements()) {
+				URL u = r.nextElement();
+				String urlStr = u.toString();
+				if ("file".equalsIgnoreCase(u.getProtocol())) {
+					urlStr = urlStr.substring(0, urlStr.length() - 20);
+				} else if ("jar".equalsIgnoreCase(u.getProtocol())) {
+					urlStr = urlStr.substring(4, urlStr.lastIndexOf("!"));// trim jar: and!
+				} else if ("zip".equalsIgnoreCase(u.getProtocol())) {
+					urlStr = urlStr.substring(4, urlStr.lastIndexOf("!"));// trim zip: and!
+				} else {
+					// ignore
+					continue;
+				}
+
+				u = null;
+				try {
+					u = new URL(urlStr);
+				} catch (MalformedURLException x) {
+					try {
+						u = new URL("file:/" + urlStr);
+					} catch (MalformedURLException ex) {
+						logger.info("Malformed: file:/" + urlStr);
+					}
+				}
+				if (u != null) {
+					urls.add(u);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return urls;
+	}
+
 
     public static String toShortString(Object obj) {
         if (obj == null) {

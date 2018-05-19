@@ -30,6 +30,9 @@ import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.StringMemberValue;
 
+/**
+ * https://blog.csdn.net/tscyds/article/details/78415172
+ */
 public class JavassistWebserviceGenerator {
 
 	public Class<?> createDynamicClazz() throws Exception {

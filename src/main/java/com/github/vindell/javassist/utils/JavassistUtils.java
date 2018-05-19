@@ -362,6 +362,15 @@ public class JavassistUtils {
 		return attribute;
 	}
 	
+	public static AnnotationsAttribute getAnnotationsAttribute(final CtMethod ctMethod) {
+		MethodInfo methodInfo = ctMethod.getMethodInfo();
+		AnnotationsAttribute attribute = (AnnotationsAttribute) methodInfo.getAttribute(AnnotationsAttribute.visibleTag);
+		if (attribute == null) {
+			attribute = new AnnotationsAttribute(methodInfo.getConstPool(), AnnotationsAttribute.visibleTag);
+		}
+		return attribute;
+	}
+	
 	public static ParameterAnnotationsAttribute getParameterAnnotationsAttribute(final CtMethod ctMethod) {
 		MethodInfo methodInfo = ctMethod.getMethodInfo();
 		ParameterAnnotationsAttribute attribute = (ParameterAnnotationsAttribute) methodInfo.getAttribute(ParameterAnnotationsAttribute.visibleTag);

@@ -17,17 +17,26 @@ package com.github.vindell.javassist.utils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.vindell.javassist.bytecode.visit.ArrayIndexAssigningVisitor;
 
+import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ClassFile;
+import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.ConstPool;
 import javassist.bytecode.FieldInfo;
+import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.SignatureAttribute;
@@ -58,6 +67,9 @@ import javassist.bytecode.annotation.StringMemberValue;
  */
 public class JavassistUtils {
 
+	protected static Logger LOG = LoggerFactory.getLogger(JavassistUtils.class);
+	protected static ConcurrentMap<String, Class<?>> COMPLIED_CLASSES = new ConcurrentHashMap<String, Class<?>>();
+	
 	public static void addClassAnnotation(CtClass clazz, javassist.bytecode.annotation.Annotation annotation) {
 		ClassFile classFile = clazz.getClassFile();
 		AnnotationsAttribute attribute = getClassAnnotationsAttribute(clazz);
@@ -344,6 +356,15 @@ public class JavassistUtils {
 		throw new RuntimeException("Invalid array type " + type + " value: " + val);
 	}
 	
+	public static AnnotationsAttribute getAnnotationsAttribute(final CtMethod ctMethod) {
+		MethodInfo methodInfo = ctMethod.getMethodInfo();
+		AnnotationsAttribute attribute = (AnnotationsAttribute) methodInfo.getAttribute(AnnotationsAttribute.visibleTag);
+		if (attribute == null) {
+			attribute = new AnnotationsAttribute(methodInfo.getConstPool(), AnnotationsAttribute.visibleTag);
+		}
+		return attribute;
+	}
+	
 	public static AnnotationsAttribute getClassAnnotationsAttribute(final CtClass clazz) {
 		ClassFile classFile = clazz.getClassFile();
 		AnnotationsAttribute attribute = (AnnotationsAttribute) classFile.getAttribute(AnnotationsAttribute.visibleTag);
@@ -351,6 +372,161 @@ public class JavassistUtils {
 			attribute = new AnnotationsAttribute(classFile.getConstPool(), AnnotationsAttribute.visibleTag);
 		}
 		return attribute;
+	}
+	
+
+	/**
+	 * 获取clazz对应的CtClass对象
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtClass getCtClass(Class<?> clazz) throws NotFoundException {
+		return getCtClass(clazz.getName());
+	}
+	
+	public static CtClass getCtClass(String classname) throws NotFoundException {
+		// 用于取得字节码类，必须在当前的classpath中，使用全称
+		ClassPool pool = ClassPoolFactory.getDefaultPool();
+		CtClass cc = null;
+		try {
+			cc = pool.get(classname);
+		} catch (Exception e) {
+			try {
+				if(pool.find(classname) == null){
+					pool.insertClassPath(classname);
+				}
+				cc = pool.get(classname);
+			} catch (Exception e1) {
+				cc = pool.makeClass(classname);
+			}
+		}
+		return cc;
+	}
+	
+	/**
+	 * 从指定的对象类型根据方法名称获取对应的CtMethod对象</br>
+	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <pre>
+	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
+	 *	或 </br>
+	 *	Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class<?> clazz = target.getClass();
+	 * </pre>
+	 * @param clazz
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtMethod getCtMethod(Class<?> clazz, String method) throws NotFoundException {
+		CtClass cc = getCtClass(clazz);
+		if (cc != null) {
+			try {
+				return getCtMethod(cc, method);	
+			} catch (Exception e) {
+				return getCtMethod(ReflectionUtils.getMethod(clazz, method));
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 从指定的对象类型根据方法名称和参数类型获取对应的CtMethod对象
+	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <pre>
+	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
+	 *	或 </br>
+	 *	Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class<?> clazz = target.getClass();
+	 * </pre>
+	 * @param clazz
+	 * @param method
+	 * @param paramTypes
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtMethod getCtMethod(Class<?> clazz, String method, Class<?>... paramTypes) throws NotFoundException {
+		CtClass cc = getCtClass(clazz);
+		if (cc != null) {
+			try {
+				return getCtMethod(cc, method, paramTypes);
+			} catch (Exception e) {
+				return getCtMethod(ReflectionUtils.getMethod(clazz, method, paramTypes));
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 从CtClass对象根据方法名获取匹配的CtMethod对象
+	 * @param cc
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtMethod getCtMethod(CtClass cc, String method) throws NotFoundException {
+		for (CtMethod cm : cc.getMethods()) {
+			if(cm.getName().equals(method)){
+				return cm;
+			}
+		}
+		return cc.getDeclaredMethod(method);
+	}
+	
+	/**
+	 * 从CtClass对象根据方法名和参数类型获取匹配的CtMethod对象
+	 * @param cc
+	 * @param method
+	 * @param paramTypes
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtMethod getCtMethod(CtClass cc, String method, Class<?>... paramTypes) throws NotFoundException {
+		ClassPool pool = ClassPoolFactory.getDefaultPool();
+		for (CtMethod cm : cc.getMethods()) {
+			CtClass[] paramCtTypes = cm.getParameterTypes();
+			if(cm.getName().equals(method) && paramCtTypes.length == paramTypes.length){
+				int matchs = 0;
+				for (int i = 0; i < paramTypes.length; i++) {
+					CtClass paramCtType = pool.get(paramTypes[i].getName());
+					if(paramCtTypes[i].getName().equals(paramCtType.getName())){
+						matchs += 1;
+					}
+				}
+				if(matchs == paramCtTypes.length){
+					return cm;
+				}
+			}
+		}
+		CtClass[] paramCtTypes = new CtClass[paramTypes.length];
+		for (int i = 0; i < paramTypes.length; i++) {
+			paramCtTypes[i] = pool.get(paramTypes[i].getName());
+		}
+		return cc.getDeclaredMethod(method, paramCtTypes);
+	}
+	
+	public static CtMethod getCtMethod(String classname, String method) throws NotFoundException {
+		// 用于取得字节码类，必须在当前的classpath中，使用全称
+		ClassPool pool = ClassPoolFactory.getDefaultPool();
+		return pool.getMethod(classname, method);
+	}
+	
+	public static CtMethod getCtMethod(String classname, String method, Class<?>... paramTypes) throws NotFoundException {
+		return getCtMethod(getTargetClass(classname), method, paramTypes);
+	}
+	
+	/**
+	 * 根据Method对象获取匹配的CtMethod对象
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static CtMethod getCtMethod(Method method) throws NotFoundException {
+		CtClass cc = getCtClass(method.getDeclaringClass());
+		if (cc != null) {
+			return getCtMethod(cc, method.getName(), method.getParameterTypes());
+		}
+		return null;
 	}
 	
 	public static AnnotationsAttribute getFieldAnnotationsAttribute(final CtField field) {
@@ -362,14 +538,95 @@ public class JavassistUtils {
 		return attribute;
 	}
 	
-	public static AnnotationsAttribute getAnnotationsAttribute(final CtMethod ctMethod) {
-		MethodInfo methodInfo = ctMethod.getMethodInfo();
-		AnnotationsAttribute attribute = (AnnotationsAttribute) methodInfo.getAttribute(AnnotationsAttribute.visibleTag);
-		if (attribute == null) {
-			attribute = new AnnotationsAttribute(methodInfo.getConstPool(), AnnotationsAttribute.visibleTag);
+	/**
+	 * 从指定的对象类型根据方法名称获取方法参数名称，匹配同名的某一个方法</br>
+	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <pre>
+	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
+	 *	或 </br>
+	 *	Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class<?> clazz = target.getClass();
+	 * </pre>
+	 * @param clazz
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static String[] getMethodParamNames(Class<?> clazz, String method) throws NotFoundException {
+		CtMethod cm = getCtMethod(clazz, method);
+		if (cm != null) {
+			return getMethodParamNames(cm);
 		}
-		return attribute;
+		return null;
 	}
+	
+	/**
+	 * 从指定的对象类型根据方法名称和参数类型获取方法参数名称
+	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <pre>
+	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
+	 *	或 </br>
+	 *	Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class<?> clazz = target.getClass();
+	 * </pre>
+	 * @param clazz
+	 * @param method
+	 * @param paramTypes
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static String[] getMethodParamNames(Class<?> clazz, String method, Class<?>... paramTypes)
+			throws NotFoundException {
+		CtMethod cm = getCtMethod(clazz, method, paramTypes);
+		if (cm != null) {
+			return getMethodParamNames(cm);
+		}
+		return null;
+	}
+
+	/**
+	 * 根据CtMethod对象获取方法参数名称
+	 * @param method
+	 * @return
+	 * @throws NotFoundException
+	 */
+	public static String[] getMethodParamNames(CtMethod cm) throws NotFoundException {
+		// 使用javaassist的反射方法获取方法的参数名
+		MethodInfo methodInfo = cm.getMethodInfo();
+		CodeAttribute codeAttribute = methodInfo.getCodeAttribute();
+		LocalVariableAttribute attr = (LocalVariableAttribute) codeAttribute.getAttribute(LocalVariableAttribute.tag);
+		if (attr == null) {
+			throw new NotFoundException(cm.getName());
+		}
+		String[] paramNames = new String[cm.getParameterTypes().length];
+		int pos = Modifier.isStatic(cm.getModifiers()) ? 0 : 1;
+		for (int i = 0; i < paramNames.length; i++) {
+			paramNames[i] = attr.variableName(i + pos);
+		}
+		return paramNames;
+	}
+	
+	/**
+	 * 获取方法参数名称
+	 */
+	public static String[] getMethodParamNames(Method method) throws NotFoundException {
+		CtMethod cm = getCtMethod(method);
+		if (cm != null) {
+			return getMethodParamNames(cm);
+		}
+		return null;
+	}
+	
+	public static String[] getMethodParamNames(String classname, String method) throws NotFoundException {
+		return getMethodParamNames(getTargetClass(classname), method);
+	}
+	
+	public static String[] getMethodParamNames(String classname, String method, Class<?>... paramTypes)
+			throws NotFoundException {
+		return getMethodParamNames(getTargetClass(classname), method, paramTypes);
+	}
+	
+	
 	
 	public static ParameterAnnotationsAttribute getParameterAnnotationsAttribute(final CtMethod ctMethod) {
 		MethodInfo methodInfo = ctMethod.getMethodInfo();
@@ -378,6 +635,25 @@ public class JavassistUtils {
 			attribute = new ParameterAnnotationsAttribute(methodInfo.getConstPool(), ParameterAnnotationsAttribute.visibleTag);
 		}
 		return attribute;
+	}
+	
+	public static Class<?> getTargetClass(String className) {
+		Class<?> ret = null;
+		try {
+			ret = COMPLIED_CLASSES.get(className);
+ 			if (ret != null) {
+ 				return ret;
+ 			} 
+ 			ret = Class.forName(className);
+ 			Class<?> existing = COMPLIED_CLASSES.putIfAbsent(className, ret);
+ 			if (existing != null) {
+ 				ret = existing;
+ 			}
+ 			return ret;
+		} catch (ClassNotFoundException e) {
+			LOG.error(e.getMessage(), e);
+		}
+		return ret;
 	}
 	
 	public static boolean hasField(final CtClass ctclass, final String fieldName) {

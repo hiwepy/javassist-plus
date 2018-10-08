@@ -37,13 +37,13 @@ import org.apache.commons.lang3.StringUtils;
  * <p>This class is similar to JUnit's assertion library. If an argument value is
  * deemed invalid, an {@link IllegalArgumentException} is thrown (typically).
  * For example:
- *
- * <pre class="code">
+ * <pre>
+ * &lt;pre class="code"&gt;
  * Assert.notNull(clazz, "The class must not be null");
- * Assert.isTrue(i > 0, "The value must be greater than zero");</pre>
+ * Assert.isTrue(i &gt; 0, "The value must be greater than zero");</pre>
  *
  * Mainly for internal use within the framework; consider Jakarta's Commons Lang
- * >= 2.0 for a more comprehensive suite of assertion utilities.
+ * &gt;= 2.0 for a more comprehensive suite of assertion utilities.
  *
  * @author Keith Donald
  * @author Juergen Hoeller
@@ -131,7 +131,6 @@ public abstract class Assert {
 	 * <pre class="code">Assert.hasLength(name, "Name must not be empty");</pre>
 	 * @param text the String to check
 	 * @param message the exception message to use if the assertion fails
-	 * @see StringUtils#hasLength
 	 */
 	public static void hasLength(String text, String message) {
 		if (StringUtils.isBlank(text)) {
@@ -144,7 +143,6 @@ public abstract class Assert {
 	 * it must not be <code>null</code> and not the empty String.
 	 * <pre class="code">Assert.hasLength(name);</pre>
 	 * @param text the String to check
-	 * @see StringUtils#hasLength
 	 */
 	public static void hasLength(String text) {
 		hasLength(text,
@@ -157,7 +155,6 @@ public abstract class Assert {
 	 * <pre class="code">Assert.hasText(name, "'name' must not be empty");</pre>
 	 * @param text the String to check
 	 * @param message the exception message to use if the assertion fails
-	 * @see StringUtils#hasText
 	 */
 	public static void hasText(String text, String message) {
 		if (StringUtils.isBlank(text)) {
@@ -170,7 +167,6 @@ public abstract class Assert {
 	 * be <code>null</code> and must contain at least one non-whitespace character.
 	 * <pre class="code">Assert.hasText(name, "'name' must not be empty");</pre>
 	 * @param text the String to check
-	 * @see StringUtils#hasText
 	 */
 	public static void hasText(String text) {
 		hasText(text,

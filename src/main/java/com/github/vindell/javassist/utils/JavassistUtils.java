@@ -58,12 +58,10 @@ import javassist.bytecode.annotation.StringMemberValue;
 
 /**
  * 
- * @className ： JavassistUtils
- * @description ： TODO(描述这个类的作用)
  * @author ： <a href="https://github.com/vindell">vindell</a>
- * @see http://blog.csdn.net/youaremoon/article/details/50766972
- * @see https://my.oschina.net/GameKing/blog/794580
- * @see http://www.codeweblog.com/%E5%85%B3%E4%BA%8Ejavassist-notfoundexception/
+ * http://blog.csdn.net/youaremoon/article/details/50766972
+ * https://my.oschina.net/GameKing/blog/794580
+ * http://www.codeweblog.com/%E5%85%B3%E4%BA%8Ejavassist-notfoundexception/
  */
 public class JavassistUtils {
 
@@ -101,10 +99,10 @@ public class JavassistUtils {
 	/**
 	 * Copies the provided annotation into the provided const pool.
 	 *
-	 * @param annotation
-	 * @param constPool
-	 * @return
-	 * @throws NotFoundException
+	 * @param annotation {@link Annotation}
+	 * @param constPool {@link ConstPool}
+	 * @return  {@link Annotation}
+	 * @throws NotFoundException If Not Found 
 	 */
 	public static Annotation cloneAnnotation(Annotation annotation, final ConstPool constPool)
 			throws NotFoundException {
@@ -294,6 +292,7 @@ public class JavassistUtils {
 	 * @param cp 	the constant pool table.
 	 * @param type 	the type of the member.
 	 * @return the member value
+	 * @throws NotFoundException if not found
 	 */
 	public static MemberValue createMemberValue(ConstPool cp, CtClass type) throws NotFoundException {
 		return javassist.bytecode.annotation.Annotation.createMemberValue(cp, type);
@@ -305,6 +304,7 @@ public class JavassistUtils {
 	 * @param type 	the type of the member.
 	 * @param val 	the value of the member.
 	 * @return the member value
+	 * @throws NotFoundException if not found
 	 */
 	public static MemberValue createMemberValue(ConstPool cp, CtClass type, Object val) throws NotFoundException {
 
@@ -377,9 +377,9 @@ public class JavassistUtils {
 
 	/**
 	 * 获取clazz对应的CtClass对象
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * @param clazz class type
+	 * @return {@link CtClass} instance
+	 * @throws NotFoundException if not found
 	 */
 	public static CtClass getCtClass(Class<?> clazz) throws NotFoundException {
 		return getCtClass(clazz.getName());
@@ -405,18 +405,18 @@ public class JavassistUtils {
 	}
 	
 	/**
-	 * 从指定的对象类型根据方法名称获取对应的CtMethod对象</br>
-	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <p>从指定的对象类型根据方法名称获取对应的CtMethod对象</p>
+	 * <p>特别注意：Spring框架中如果是代理对象请使用如下代码：</p>
 	 * <pre>
-	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
-	 *	或 </br>
+	 *	Class&lt;?&gt; clazz = AopUtils.getTargetClass(proxy);
+	 *	或 
 	 *	Object target = AopTargetUtils.getTarget(proxy);
-	 *	Class<?> clazz = target.getClass();
+	 *	Class&lt;?&gt; clazz = target.getClass();
 	 * </pre>
-	 * @param clazz
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * @param clazz the class type
+	 * @param method the method name
+	 * @return {@link CtMethod} instance
+	 * @throws NotFoundException when not found
 	 */
 	public static CtMethod getCtMethod(Class<?> clazz, String method) throws NotFoundException {
 		CtClass cc = getCtClass(clazz);
@@ -431,19 +431,19 @@ public class JavassistUtils {
 	}
 
 	/**
-	 * 从指定的对象类型根据方法名称和参数类型获取对应的CtMethod对象
-	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
+	 * <p>从指定的对象类型根据方法名称和参数类型获取对应的CtMethod对象</p>
+	 * <p>特别注意：Spring框架中如果是代理对象请使用如下代码：</p>
 	 * <pre>
-	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
-	 *	或 </br>
+	 *	Class&lt;?&gt; clazz = AopUtils.getTargetClass(proxy);
+	 *	或 
 	 *	Object target = AopTargetUtils.getTarget(proxy);
-	 *	Class<?> clazz = target.getClass();
+	 *	Class&lt;?&gt; clazz = target.getClass();
 	 * </pre>
-	 * @param clazz
-	 * @param method
-	 * @param paramTypes
-	 * @return
-	 * @throws NotFoundException
+	 * @param clazz the class type
+	 * @param method the method name
+	 * @param paramTypes the param types
+	 * @return {@link CtMethod} instance
+	 * @throws NotFoundException when not found
 	 */
 	public static CtMethod getCtMethod(Class<?> clazz, String method, Class<?>... paramTypes) throws NotFoundException {
 		CtClass cc = getCtClass(clazz);
@@ -459,10 +459,10 @@ public class JavassistUtils {
 	
 	/**
 	 * 从CtClass对象根据方法名获取匹配的CtMethod对象
-	 * @param cc
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * @param cc {@link CtClass} instance
+	 * @param method the method name
+	 * @return {@link CtMethod} instance
+	 * @throws NotFoundException when not found
 	 */
 	public static CtMethod getCtMethod(CtClass cc, String method) throws NotFoundException {
 		for (CtMethod cm : cc.getMethods()) {
@@ -475,11 +475,11 @@ public class JavassistUtils {
 	
 	/**
 	 * 从CtClass对象根据方法名和参数类型获取匹配的CtMethod对象
-	 * @param cc
-	 * @param method
-	 * @param paramTypes
-	 * @return
-	 * @throws NotFoundException
+	 * @param cc {@link CtClass} instance
+	 * @param method the method name
+	 * @param paramTypes the param types
+	 * @return {@link CtMethod} instance
+	 * @throws NotFoundException when not found
 	 */
 	public static CtMethod getCtMethod(CtClass cc, String method, Class<?>... paramTypes) throws NotFoundException {
 		ClassPool pool = ClassPoolFactory.getDefaultPool();
@@ -517,9 +517,9 @@ public class JavassistUtils {
 	
 	/**
 	 * 根据Method对象获取匹配的CtMethod对象
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * @param method the mothod
+	 * @return CtMethod instance
+	 * @throws NotFoundException when not found
 	 */
 	public static CtMethod getCtMethod(Method method) throws NotFoundException {
 		CtClass cc = getCtClass(method.getDeclaringClass());
@@ -539,18 +539,16 @@ public class JavassistUtils {
 	}
 	
 	/**
-	 * 从指定的对象类型根据方法名称获取方法参数名称，匹配同名的某一个方法</br>
-	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
-	 * <pre>
-	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
-	 *	或 </br>
-	 *	Object target = AopTargetUtils.getTarget(proxy);
-	 *	Class<?> clazz = target.getClass();
-	 * </pre>
-	 * @param clazz
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * <p>从指定的对象类型根据方法名称获取方法参数名称，匹配同名的某一个方法</p>
+	 * <p>特别注意：Spring框架中如果是代理对象请使用如下代码：</p>
+	 *	<p>Class&lt;?&gt; clazz = AopUtils.getTargetClass(proxy);</p>
+	 *	或 
+	 *	<p>Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class&lt;?&gt; clazz = target.getClass();</p>
+	 * @param clazz the class type
+	 * @param method the method 
+	 * @return the param names
+	 * @throws NotFoundException when not found
 	 */
 	public static String[] getMethodParamNames(Class<?> clazz, String method) throws NotFoundException {
 		CtMethod cm = getCtMethod(clazz, method);
@@ -561,19 +559,17 @@ public class JavassistUtils {
 	}
 	
 	/**
-	 * 从指定的对象类型根据方法名称和参数类型获取方法参数名称
-	 * 特别注意：Spring框架中如果是代理对象请使用如下代码：</br>
-	 * <pre>
-	 *	Class<?> clazz = AopUtils.getTargetClass(proxy);
-	 *	或 </br>
-	 *	Object target = AopTargetUtils.getTarget(proxy);
-	 *	Class<?> clazz = target.getClass();
-	 * </pre>
-	 * @param clazz
-	 * @param method
-	 * @param paramTypes
-	 * @return
-	 * @throws NotFoundException
+	 * <p>从指定的对象类型根据方法名称和参数类型获取方法参数名称</p>
+	 * <p>特别注意：Spring框架中如果是代理对象请使用如下代码：</p>
+	 * <p> Class&lt;?&gt; clazz = AopUtils.getTargetClass(proxy);</p>
+	 *	或 
+	 * <p>Object target = AopTargetUtils.getTarget(proxy);
+	 *	Class&lt;?&gt; clazz = target.getClass();</p>
+	 * @param clazz the class type
+	 * @param method the method 
+	 * @param paramTypes the param types 
+	 * @return the param names
+	 * @throws NotFoundException when not found
 	 */
 	public static String[] getMethodParamNames(Class<?> clazz, String method, Class<?>... paramTypes)
 			throws NotFoundException {
@@ -586,9 +582,9 @@ public class JavassistUtils {
 
 	/**
 	 * 根据CtMethod对象获取方法参数名称
-	 * @param method
-	 * @return
-	 * @throws NotFoundException
+	 * @param cm the method 
+	 * @return the param names
+	 * @throws NotFoundException when not found
 	 */
 	public static String[] getMethodParamNames(CtMethod cm) throws NotFoundException {
 		// 使用javaassist的反射方法获取方法的参数名
@@ -606,9 +602,6 @@ public class JavassistUtils {
 		return paramNames;
 	}
 	
-	/**
-	 * 获取方法参数名称
-	 */
 	public static String[] getMethodParamNames(Method method) throws NotFoundException {
 		CtMethod cm = getCtMethod(method);
 		if (cm != null) {

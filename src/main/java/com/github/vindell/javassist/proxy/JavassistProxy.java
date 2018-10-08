@@ -23,7 +23,7 @@ import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 
 /**
- * @see http://blog.csdn.net/mingxin95/article/details/51810499
+ * http://blog.csdn.net/mingxin95/article/details/51810499
  */
 @SuppressWarnings({ "unchecked" })
 public class JavassistProxy {

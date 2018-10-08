@@ -43,12 +43,14 @@ public class ClassPoolFactory {
 	}
 
 	/**
-	 * <pre>
+	 *  <pre>
 	 *	ClassPath是一个接口，代表类的搜索路径，含有具体的搜索实现。当通过其它途径无法获取要编辑的类时，可以尝试定制一个自己的ClassPath。API提供的实现中值得关注的有：
 	 *	1. ByteArrayClassPath : 将类以字节码的形式加入到该path中，ClassPool 可以从该path中生成所需的CtClass。
 	 *	2. ClassClassPath : 通过某个class生成的path，通过该class的classloader来尝试加载指定的类文件。
 	 *	3. LoaderClassPath : 通过某个classloader生成path，并通过该classloader搜索加载指定的类文件。需要注意的是该类加载器以弱引用的方式存在于path中，当不存在强引用时，随时可能会被清理。
 	 * </pre>
+	 * @param classPaths The class paths
+	 * @return ClassPool Instance
 	 */
 	public static ClassPool getClassPool(ClassPath... classPaths) {
 		if (null == classPaths || classPaths.length == 0) {
@@ -70,9 +72,8 @@ public class ClassPoolFactory {
 
 	/**
 	 * 不同的ClassLoader返回不同的ClassPool
-	 * 
-	 * @param loader
-	 * @return
+	 * @param loader the class loader
+	 * @return ClassPool Instance
 	 */
 	public static ClassPool getClassPool(ClassLoader loader) {
 		if (null == loader) {
@@ -129,8 +130,5 @@ public class ClassPoolFactory {
 		
 		return pool;
 	}
-	
-	
-
 	
 }

@@ -255,8 +255,10 @@ public abstract class Proxy {
 	}
 
 	/**
+	 * 
 	 * get instance with special handler.
 	 *
+	 * @param handler InvocationHandler
 	 * @return instance.
 	 */
 	abstract public Object newInstance(InvocationHandler handler);

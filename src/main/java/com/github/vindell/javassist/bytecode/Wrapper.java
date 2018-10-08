@@ -91,8 +91,7 @@ public abstract class Wrapper {
 	/**
 	 * get wrapper.
 	 *
-	 * @param c
-	 *            Class instance.
+	 * @param c Class instance.
 	 * @return Wrapper instance(not null).
 	 */
 	public static Wrapper getWrapper(Class<?> c) {
@@ -342,8 +341,7 @@ public abstract class Wrapper {
 	/**
 	 * get property type.
 	 *
-	 * @param pn
-	 *            property name.
+	 * @param pn property name.
 	 * @return Property type or nul.
 	 */
 	abstract public Class<?> getPropertyType(String pn);
@@ -351,8 +349,7 @@ public abstract class Wrapper {
 	/**
 	 * has property.
 	 *
-	 * @param name
-	 *            property name.
+	 * @param name property name.
 	 * @return has or has not.
 	 */
 	abstract public boolean hasProperty(String name);
@@ -360,11 +357,11 @@ public abstract class Wrapper {
 	/**
 	 * get property value.
 	 *
-	 * @param instance
-	 *            instance.
-	 * @param pn
-	 *            property name.
+	 * @param instance instance.
+	 * @param pn  property name.
 	 * @return value.
+	 * @throws NoSuchPropertyException when not found Property
+	 * @throws IllegalArgumentException when illegal argument
 	 */
 	abstract public Object getPropertyValue(Object instance, String pn)
 			throws NoSuchPropertyException, IllegalArgumentException;
@@ -372,12 +369,11 @@ public abstract class Wrapper {
 	/**
 	 * set property value.
 	 *
-	 * @param instance
-	 *            instance.
-	 * @param pn
-	 *            property name.
-	 * @param pv
-	 *            property value.
+	 * @param instance instance.
+	 * @param pn property name.
+	 * @param pv property value.
+	 * @throws NoSuchPropertyException when not found Property
+	 * @throws IllegalArgumentException when illegal argument
 	 */
 	abstract public void setPropertyValue(Object instance, String pn, Object pv)
 			throws NoSuchPropertyException, IllegalArgumentException;
@@ -385,11 +381,11 @@ public abstract class Wrapper {
 	/**
 	 * get property value.
 	 *
-	 * @param instance
-	 *            instance.
-	 * @param pns
-	 *            property name array.
+	 * @param instance instance.
+	 * @param pns  property name array.
 	 * @return value array.
+	 * @throws NoSuchPropertyException when not found Property
+	 * @throws IllegalArgumentException when illegal argument
 	 */
 	public Object[] getPropertyValues(Object instance, String[] pns)
 			throws NoSuchPropertyException, IllegalArgumentException {
@@ -402,12 +398,11 @@ public abstract class Wrapper {
 	/**
 	 * set property value.
 	 *
-	 * @param instance
-	 *            instance.
-	 * @param pns
-	 *            property name array.
-	 * @param pvs
-	 *            property value array.
+	 * @param instance instance.
+	 * @param pns property name array.
+	 * @param pvs property value array.
+	 * @throws NoSuchPropertyException when not found Property
+	 * @throws IllegalArgumentException when illegal argument
 	 */
 	public void setPropertyValues(Object instance, String[] pns, Object[] pvs)
 			throws NoSuchPropertyException, IllegalArgumentException {
@@ -435,8 +430,7 @@ public abstract class Wrapper {
 	/**
 	 * has method.
 	 *
-	 * @param name
-	 *            method name.
+	 * @param name method name.
 	 * @return has or has not.
 	 */
 	public boolean hasMethod(String name) {
@@ -445,18 +439,18 @@ public abstract class Wrapper {
 				return true;
 		return false;
 	}
-
+	 
 	/**
+	 * 
 	 * invoke method.
 	 *
-	 * @param instance
-	 *            instance.
-	 * @param mn
-	 *            method name.
-	 * @param types
-	 * @param args
-	 *            argument array.
-	 * @return return value.
+	 * @param instance instance.
+	 * @param mn method name.
+	 * @param types args type
+	 * @param args argument array.
+	 * @return Object instance
+	 * @throws NoSuchMethodException  when not found method
+	 * @throws InvocationTargetException when invocation Error
 	 */
 	abstract public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args)
 			throws NoSuchMethodException, InvocationTargetException;

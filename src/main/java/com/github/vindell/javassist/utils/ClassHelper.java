@@ -92,8 +92,8 @@ public class ClassHelper {
     /**
      * get class loader
      *
-     * @param cls
-     * @return class loader
+     * @param cls Class 
+     * @return {@link ClassLoader} class loader
      */
     public static ClassLoader getClassLoader(Class<?> cls) {
         ClassLoader cl = null;
@@ -130,6 +130,9 @@ public class ClassHelper {
     /**
      * Same as <code>Class.forName()</code>, except that it works for primitive
      * types.
+     * @param name        the name of the Class
+     * @return Class instance for the supplied name
+     * @throws ClassNotFoundException if the class was not found
      */
     public static Class<?> forName(String name) throws ClassNotFoundException {
         return forName(name, getClassLoader());

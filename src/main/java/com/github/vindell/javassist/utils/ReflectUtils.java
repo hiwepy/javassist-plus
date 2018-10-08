@@ -228,7 +228,6 @@ public final class ReflectUtils {
 
     /**
      * get name.
-     * java.lang.Object[][].class => "java.lang.Object[][]"
      *
      * @param c class.
      * @return name.
@@ -273,7 +272,7 @@ public final class ReflectUtils {
 
     /**
      * get method name.
-     * "void do(int)", "void do()", "int do(java.lang.String,boolean)"
+     * <p>"void do(int)", "void do()", "int do(java.lang.String,boolean)"</p>
      *
      * @param m method.
      * @return name.
@@ -312,7 +311,7 @@ public final class ReflectUtils {
 
     /**
      * get constructor name.
-     * "()", "(java.lang.String,int)"
+     * <p>"()", "(java.lang.String,int)"</p>
      *
      * @param c constructor.
      * @return name.
@@ -331,12 +330,8 @@ public final class ReflectUtils {
 
     /**
      * get class desc.
-     * boolean[].class => "[Z"
-     * Object.class => "Ljava/lang/Object;"
-     *
      * @param c class.
      * @return desc.
-     * @throws NotFoundException
      */
     public static String getDesc(Class<?> c) {
         StringBuilder ret = new StringBuilder();
@@ -367,11 +362,8 @@ public final class ReflectUtils {
 
     /**
      * get class array desc.
-     * [int.class, boolean[].class, Object.class] => "I[ZLjava/lang/Object;"
-     *
      * @param cs class array.
      * @return desc.
-     * @throws NotFoundException
      */
     public static String getDesc(final Class<?>[] cs) {
         if (cs.length == 0)
@@ -385,9 +377,6 @@ public final class ReflectUtils {
 
     /**
      * get method desc.
-     * int do(int arg1) => "do(I)I"
-     * void do(String arg1,boolean arg2) => "do(Ljava/lang/String;Z)V"
-     *
      * @param m method.
      * @return desc.
      */
@@ -402,7 +391,6 @@ public final class ReflectUtils {
 
     /**
      * get constructor desc.
-     * "()V", "(Ljava/lang/String;I)V"
      *
      * @param c constructor.
      * @return desc
@@ -418,7 +406,6 @@ public final class ReflectUtils {
 
     /**
      * get method desc.
-     * "(I)I", "()V", "(Ljava/lang/String;Z)V"
      *
      * @param m method.
      * @return desc.
@@ -435,12 +422,9 @@ public final class ReflectUtils {
 
     /**
      * get class desc.
-     * Object.class => "Ljava/lang/Object;"
-     * boolean[].class => "[Z"
-     *
      * @param c class.
      * @return desc.
-     * @throws NotFoundException
+     * @throws NotFoundException when not found
      */
     public static String getDesc(final CtClass c) throws NotFoundException {
         StringBuilder ret = new StringBuilder();
@@ -468,7 +452,6 @@ public final class ReflectUtils {
 
     /**
      * get method desc.
-     * "do(I)I", "do()V", "do(Ljava/lang/String;Z)V"
      *
      * @param m method.
      * @return desc.
@@ -484,10 +467,10 @@ public final class ReflectUtils {
 
     /**
      * get constructor desc.
-     * "()V", "(Ljava/lang/String;I)V"
      *
      * @param c constructor.
      * @return desc
+     * @throws NotFoundException when not found
      */
     public static String getDesc(final CtConstructor c) throws NotFoundException {
         StringBuilder ret = new StringBuilder("(");
@@ -500,10 +483,10 @@ public final class ReflectUtils {
 
     /**
      * get method desc.
-     * "(I)I", "()V", "(Ljava/lang/String;Z)V".
      *
      * @param m method.
      * @return desc.
+     * @throws NotFoundException when not found
      */
     public static String getDescWithoutMethodName(final CtMethod m) throws NotFoundException {
         StringBuilder ret = new StringBuilder();
@@ -517,7 +500,6 @@ public final class ReflectUtils {
 
     /**
      * name to desc.
-     * java.util.Map[][] => "[[Ljava/util/Map;"
      *
      * @param name name.
      * @return desc.
@@ -545,7 +527,6 @@ public final class ReflectUtils {
 
     /**
      * desc to name.
-     * "[[I" => "int[][]"
      *
      * @param desc desc.
      * @return name.
@@ -611,11 +592,9 @@ public final class ReflectUtils {
 
     /**
      * name to class.
-     * "boolean" => boolean.class
-     * "java.util.Map[][]" => java.util.Map[][].class
-     *
      * @param name name.
      * @return Class instance.
+     * @throws ClassNotFoundException when class not found
      */
     public static Class<?> name2class(String name) throws ClassNotFoundException {
         return name2class(ClassHelper.getClassLoader(), name);
@@ -623,12 +602,10 @@ public final class ReflectUtils {
 
     /**
      * name to class.
-     * "boolean" => boolean.class
-     * "java.util.Map[][]" => java.util.Map[][].class
-     *
      * @param cl   ClassLoader instance.
      * @param name name.
      * @return Class instance.
+     * @throws ClassNotFoundException when class not found
      */
     private static Class<?> name2class(ClassLoader cl, String name) throws ClassNotFoundException {
         int c = 0, index = name.indexOf('[');
@@ -676,12 +653,9 @@ public final class ReflectUtils {
 
     /**
      * desc to class.
-     * "[Z" => boolean[].class
-     * "[[Ljava/util/Map;" => java.util.Map[][].class
-     *
      * @param desc desc.
      * @return Class instance.
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException when class not found
      */
     public static Class<?> desc2class(String desc) throws ClassNotFoundException {
         return desc2class(ClassHelper.getClassLoader(), desc);
@@ -689,13 +663,10 @@ public final class ReflectUtils {
 
     /**
      * desc to class.
-     * "[Z" => boolean[].class
-     * "[[Ljava/util/Map;" => java.util.Map[][].class
-     *
      * @param cl   ClassLoader instance.
      * @param desc desc.
      * @return Class instance.
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException when class not found
      */
     private static Class<?> desc2class(ClassLoader cl, String desc) throws ClassNotFoundException {
         switch (desc.charAt(0)) {
@@ -742,7 +713,7 @@ public final class ReflectUtils {
      *
      * @param desc desc.
      * @return Class class array.
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException when class not found
      */
     public static Class<?>[] desc2classArray(String desc) throws ClassNotFoundException {
         Class<?>[] ret = desc2classArray(ClassHelper.getClassLoader(), desc);
@@ -755,7 +726,7 @@ public final class ReflectUtils {
      * @param cl   ClassLoader instance.
      * @param desc desc.
      * @return Class[] class array.
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException when class not found
      */
     private static Class<?>[] desc2classArray(ClassLoader cl, String desc) throws ClassNotFoundException {
         if (desc.length() == 0)
@@ -773,9 +744,10 @@ public final class ReflectUtils {
      *
      * @param clazz      Target class to find method
      * @param methodName Method signature, e.g.: method1(int, String). It is allowed to provide method name only, e.g.: method2
+     * @param parameterTypes parameter Types
      * @return target method
-     * @throws NoSuchMethodException
-     * @throws ClassNotFoundException
+     * @throws NoSuchMethodException when method not found
+     * @throws ClassNotFoundException when class not found
      * @throws IllegalStateException  when multiple methods are found (overridden method when parameter info is not provided)
      */
     public static Method findMethodByMethodSignature(Class<?> clazz, String methodName, String[] parameterTypes)
@@ -848,7 +820,7 @@ public final class ReflectUtils {
      * <p>
      * This method will not trigger classloading for the given interface, therefore it will not lead to error when
      * the given interface is not visible by the classloader
-     *
+     * </p>
      * @param obj                Object to examine
      * @param interfaceClazzName The given interface
      * @return true if the object implements the given interface, otherwise return false

@@ -1,6 +1,16 @@
 # javassist-plus
 javassist-plus
 
+### Maven Dependency
+
+``` xml
+<dependency>
+	<groupId>com.github.vindell</groupId>
+	<artifactId>javassist-plus</artifactId>
+	<version>${project.version}</version>
+</dependency>
+```
+
 #[Javassist基础与实践](https://blog.csdn.net/tscyds/article/details/78415172)
 ###概述
 

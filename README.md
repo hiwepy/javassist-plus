@@ -7,7 +7,7 @@ javassist-plus
 <dependency>
 	<groupId>com.github.vindell</groupId>
 	<artifactId>javassist-plus</artifactId>
-	<version>${project.version}</version>
+	<version>1.0.2.RELEASE</version>
 </dependency>
 ```
 

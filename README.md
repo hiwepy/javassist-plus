@@ -5,7 +5,7 @@ javassist-plus
 
 ``` xml
 <dependency>
-	<groupId>com.github.vindell</groupId>
+	<groupId>com.github.hiwepy</groupId>
 	<artifactId>javassist-plus</artifactId>
 	<version>${project.version}</version>
 </dependency>

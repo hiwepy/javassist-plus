@@ -341,7 +341,6 @@
             </activation>
     <properties>
         <!-- Dependency versions -->
-        <additionalparam>-Xdoclint:none</additionalparam>
         <javax-jws-api.version>1.1</javax-jws-api.version>
         <lombok.version>1.18.46</lombok.version>
         <maven.test.skip>true</maven.test.skip>
